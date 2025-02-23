@@ -2,8 +2,8 @@
 - PHP 8.2.7 (Debian 12)
 - Phel v0.16.1
 ## Working examples
-### Hello World
-https://amphp.org/installation
+### Hello World `src/helloworld.phel`
+- https://amphp.org/installation
 
 ```
 $ composer install
@@ -11,10 +11,16 @@ $ vendor/bin/phel run src/helloworld.phel
 Hello World from the future!%
 ```
 
-See notes in `src/helloworld.phel`.
+See notes in file.
+## WIP examples
+### HTTP Server `src/httpserver.phel`
+https://github.com/amphp/http-server-router/blob/2.x/examples/hello-world.php
+
+Stdout logger makes Phel REPL exit.
+
 ## TODO
 ### Channels (amphp/sync)
-https://github.com/amphp/sync?tab=readme-ov-file#channels
+- https://github.com/amphp/sync?tab=readme-ov-file#channels
 How to represent such code with Phel?
 ```
 [$left, $right] = createChannelPair();

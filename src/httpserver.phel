@@ -1,0 +1,10 @@
+(ns web-skeleton\webserver)
+
+(comment
+  ## The functions from \Amp are automatically loaded and can be seen via:
+  (php/aget (php/get_defined_functions) "user")
+  )
+
+## $logHandler = new StreamHandler(ByteStream\getStdout());
+(def log-handler (php/new \Amp\Log\StreamHandler (php/amp\bytestream\getstdout)))
+## Quits REPL! Needs some custom handler/adapter?

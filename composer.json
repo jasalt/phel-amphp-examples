@@ -13,7 +13,11 @@
   "require": {
     "php": ">=8.2",
     "phel-lang/phel-lang": "^0.16",
-    "amphp/amp": "^3.1"
+    "amphp/amp": "^3.1",
+    "amphp/http-server": "^3.4",
+    "amphp/http-server-router": "^2.0",
+    "amphp/byte-stream": "^2.1",
+    "amphp/log": "^2.0"
   },
   "require-dev": {
     "symfony/var-dumper": "^6.4"
