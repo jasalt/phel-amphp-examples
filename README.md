@@ -33,6 +33,9 @@ $future1 = async(function () use ($left): void {
     echo "Received ", $received, " in coroutine 1\n";
 });
 ```
+### Pipeline / ConcurrentIterator (amphp/pipeline)
+- https://github.com/amphp/sync?tab=readme-ov-file#approach-4-concurrentiterator
+- https://github.com/amphp/pipeline
 
 Original template repo readme continues...
 # Phel Cli Skeleton
