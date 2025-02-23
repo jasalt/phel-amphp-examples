@@ -1,3 +1,19 @@
+# [AMPHP](https://amphp.org/) testing with [Phel](https://phel-lang.org/)
+- PHP 8.2.7 (Debian 12)
+- Phel v0.16.1
+## Working examples
+### Hello World
+https://amphp.org/installation
+
+```
+$ composer install
+$ vendor/bin/phel run src/helloworld.phel
+Hello World from the future!%
+```
+
+See notes in `src/helloworld.phel`.
+
+Original template repo readme continues...
 # Phel Cli Skeleton
 
 [Phel](https://phel-lang.org/) is a functional programming language that compiles to PHP. 

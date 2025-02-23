@@ -1,4 +1,4 @@
-(ns web-skeleton\helloworld
+(ns cli-skeleton\helloworld
   ## (:use \Amp\Future)
   ## (:use \Amp)  # not required
   )
