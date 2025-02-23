@@ -12,6 +12,21 @@ Hello World from the future!%
 ```
 
 See notes in `src/helloworld.phel`.
+## TODO
+### Channels (amphp/sync)
+https://github.com/amphp/sync?tab=readme-ov-file#channels
+How to represent such code with Phel?
+```
+[$left, $right] = createChannelPair();
+
+$future1 = async(function () use ($left): void {
+    echo "Coroutine 1 started\n";
+    delay(1); // Delay to simulate I/O.
+    $left->send(42);
+    $received = $left->receive();
+    echo "Received ", $received, " in coroutine 1\n";
+});
+```
 
 Original template repo readme continues...
 # Phel Cli Skeleton
