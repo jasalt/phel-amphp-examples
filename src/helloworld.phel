@@ -1,0 +1,47 @@
+(ns web-skeleton\helloworld
+  ## (:use \Amp\Future)
+  ## (:use \Amp)  # not required
+  )
+
+### AMPHP Example "Hello World" https://amphp.org/installation
+
+## Tutorial's `use function` statement is not supported in Phel (?):
+## use function Amp\async;
+## use function Amp\delay;
+
+(comment
+  ## The functions from \Amp get loaded however and can be seen via:
+  (php/aget (php/get_defined_functions) "user")
+  ## The tutorial functions can be referred by:
+  php/amp\async
+  php/amp\delay
+
+  ## Phel uses custom AbstractFn function class while php/amp\async expects
+  ## a Closure https://github.com/amphp/amp/blob/3.x/src/functions.php
+  (def erroring-future (php/amp\async |(println "from future")))
+
+  ##  TypeError: Amp\async(): Argument #1 ($closure) must be of type Closure, Phel\Lang\AbstractFn@anonymous given, called in /tmp/__phelWTNwBW on line 7
+  )
+
+(defn my-function1 []
+  (print "Hello ")
+  (php/amp\delay 2)
+  (print "the future!"))
+
+## Converting Phel\Lang\AbstractFn into Closure:
+(def my-closure1 (php/:: \Closure (fromCallable my-function1)))
+(def future1 (php/amp\async my-closure1))
+
+(defn my-function2 []
+  (print "World ")
+  (php/amp\delay 1)
+  (print "from "))
+
+(def my-closure2 (php/:: \Closure (fromCallable my-function2)))
+(def future2 (php/amp\async my-closure2))
+
+(php/-> future1 (await))
+(php/-> future2 (await))
+
+## Prints:
+## Hello World from the future!
