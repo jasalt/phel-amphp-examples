@@ -24,7 +24,7 @@ Hello World from the future!%
 $ vendor/bin/phel run src/httpserver.phel
 ```
 
-Starts server at http://localhost:1337.
+Starts server at http://localhost:1337. Demo route with argument http://localhost:1337/myname.
 
 - Does not work in Phel REPL as stdout logger makes it exit.
 - How are webservers with Clojure(Script) set up to work with REPL that allow redefining functions or live reloading on the fly?

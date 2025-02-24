@@ -24,18 +24,34 @@
 
 (def error-handler (php/new \Amp\Http\Server\DefaultErrorHandler))
 
-(defn handler-fn
+(defn callable->closure
+  "Converts callable such as Phel\Lang\AbstractFn into Closure that is often
+  expected by AMPHP"
+  [phel-fn]
+  (php/:: \Closure (fromCallable phel-fn)))
+
+(defn handler-root
   "takes Amp\Http\Server\Request"
   [req]
   (php/new \Amp\Http\Server\Response (php/:: \Amp\Http\HttpStatus OK)
            (php-associative-array "content-type" "text/plain") "Hello, world!"))
 
-(def handler-cl (php/:: \Closure (fromCallable handler-fn)))
+(defn handler-greet
+  "takes Amp\Http\Server\Request"
+  [req]
+  (let [args (php/-> req (getAttribute (php/:: \Amp\Http\Server\Router class)))]
+    (php/new \Amp\Http\Server\Response (php/:: \Amp\Http\HttpStatus OK)
+             (php-associative-array "content-type" "text/plain")
+             (str "Hello, " (get args "name") "!"))))
 
 (def router (php/new \Amp\Http\Server\Router server logger error-handler))
 (doto router
-  (php/-> (addRoute "GET" "/" (php/new \Amp\Http\Server\RequestHandler\ClosureRequestHandler handler-cl)))
-  )
+  (php/-> (addRoute "GET" "/"
+                    (php/new \Amp\Http\Server\RequestHandler\ClosureRequestHandler
+                             (callable->closure handler-root))))
+  (php/-> (addRoute "GET" "/{name}"
+                    (php/new \Amp\Http\Server\RequestHandler\ClosureRequestHandler
+                             (callable->closure handler-greet)))))
 
 (php/-> server (start router error-handler))
 
