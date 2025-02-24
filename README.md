@@ -1,7 +1,13 @@
-# [AMPHP](https://amphp.org/) testing with [Phel](https://phel-lang.org/)
-- PHP 8.2.7 (Debian 12)
-- Phel v0.16.1
+# PHP Fibers & AMPHP testing with [Phel](https://phel-lang.org/)
+
+Testing how concurrency with [PHP 8.1 Fibers](https://wiki.php.net/rfc/fibers) and async libraries available in [AMPHP](https://amphp.org/) project compare to [Janet](https://janet-lang.org/docs/fibers/index.html), NodeJS and other platforms.
+
 ## Working examples
+See notes in files. Tested on:
+
+- PHP 8.2.7 (Debian 12)
+- Phel v0.16.1 (dev-main)
+
 ### Hello World `src/helloworld.phel`
 - https://amphp.org/installation
 
@@ -11,12 +17,18 @@ $ vendor/bin/phel run src/helloworld.phel
 Hello World from the future!%
 ```
 
-See notes in file.
-## WIP examples
 ### HTTP Server `src/httpserver.phel`
-https://github.com/amphp/http-server-router/blob/2.x/examples/hello-world.php
+- https://github.com/amphp/http-server-router/blob/2.x/examples/hello-world.php
 
-Stdout logger makes Phel REPL exit.
+```
+$ vendor/bin/phel run src/httpserver.phel
+```
+
+Starts server at http://localhost:1337.
+
+- Does not work in Phel REPL as stdout logger makes it exit.
+- How are webservers with Clojure(Script) set up to work with REPL that allow redefining functions or live reloading on the fly?
+  - Something about AMPHP HTTP server cluster hotreloading: https://amphp.org/cluster#hot-reload-in-intellij--phpstorm
 
 ## TODO
 ### Channels (amphp/sync)

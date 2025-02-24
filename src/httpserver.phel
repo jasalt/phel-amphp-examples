@@ -8,3 +8,41 @@
 ## $logHandler = new StreamHandler(ByteStream\getStdout());
 (def log-handler (php/new \Amp\Log\StreamHandler (php/amp\bytestream\getstdout)))
 ## Quits REPL! Needs some custom handler/adapter?
+
+(doto log-handler
+  (php/-> (pushProcessor (php/new \Monolog\Processor\PsrLogMessageProcessor)))
+  (php/-> (setFormatter (php/new \Amp\Log\ConsoleFormatter))))
+
+(def logger (php/new \Monolog\Logger "server"))
+(php/-> logger (pushHandler log-handler))
+
+(def server (php/:: \Amp\Http\Server\SocketHttpServer (createForDirectAccess logger)))
+
+(doto server
+  (php/-> (expose (php/new \Amp\Socket\InternetAddress "0.0.0.0" 1337)))
+  (php/-> (expose (php/new \Amp\Socket\InternetAddress "[::]" 1337))))
+
+(def error-handler (php/new \Amp\Http\Server\DefaultErrorHandler))
+
+(defn handler-fn
+  "takes Amp\Http\Server\Request"
+  [req]
+  (php/new \Amp\Http\Server\Response (php/:: \Amp\Http\HttpStatus OK)
+           (php-associative-array "content-type" "text/plain") "Hello, world!"))
+
+(def handler-cl (php/:: \Closure (fromCallable handler-fn)))
+
+(def router (php/new \Amp\Http\Server\Router server logger error-handler))
+(doto router
+  (php/-> (addRoute "GET" "/" (php/new \Amp\Http\Server\RequestHandler\ClosureRequestHandler handler-cl)))
+  )
+
+(php/-> server (start router error-handler))
+
+(def signal (php/amp\trapsignal (php-indexed-array php/SIGINT php/SIGTERM)))
+
+(php/-> logger (info (str "Caught signal " signal " stopping server")))
+
+(php/-> server (stop))
+
+(println "OK")
