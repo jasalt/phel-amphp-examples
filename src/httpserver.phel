@@ -1,4 +1,6 @@
-(ns web-skeleton\webserver)
+(ns amphp-demo\httpserver
+  (:require amphp-demo\utils :refer [callable->closure])
+  )
 
 (comment
   ## The functions from \Amp are automatically loaded and can be seen via:
@@ -23,12 +25,6 @@
   (php/-> (expose (php/new \Amp\Socket\InternetAddress "[::]" 1337))))
 
 (def error-handler (php/new \Amp\Http\Server\DefaultErrorHandler))
-
-(defn callable->closure
-  "Converts callable such as Phel\Lang\AbstractFn into Closure that is often
-  expected by AMPHP"
-  [phel-fn]
-  (php/:: \Closure (fromCallable phel-fn)))
 
 (defn handler-root
   "takes Amp\Http\Server\Request"

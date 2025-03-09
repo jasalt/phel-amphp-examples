@@ -1,4 +1,4 @@
-(ns cli-skeleton\helloworld
+(ns amphp-demo\helloworld
   ## (:use \Amp\Future)
   ## (:use \Amp)  # not required
   )
