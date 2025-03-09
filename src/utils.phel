@@ -5,3 +5,10 @@
   expected by AMPHP"
   [phel-fn]
   (php/:: \Closure (fromCallable phel-fn)))
+
+(defn show-user-defined
+  "List 'user' definitions to see which \Amp functions are available.
+   AFAIK Phel does not have syntax for requiring them explicitly in ns form e.g. from:
+   https://github.com/amphp/amp/blob/7cf7fef3d667bfe4b2560bc87e67d5387a7bcde9/src/functions.php"
+  []
+  (php/aget (php/get_defined_functions) "user"))
