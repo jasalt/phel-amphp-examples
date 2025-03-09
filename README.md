@@ -43,6 +43,17 @@ Starts server at http://localhost:1337 (demo route with argument http://localhos
   - Research notes at https://github.com/phel-lang/phel-lang/discussions/794
   - Something about AMPHP HTTP server cluster hotreloading: https://amphp.org/cluster#hot-reload-in-intellij--phpstorm
 
+### `amphp/http-server` `event-source.php`
+Example with server-sent event stream connection (SSE).
+Client keeps half-duplex HTTP connection open to server which pushes updates to client.
+- https://github.com/amphp/http-server/blob/3.x/examples/event-source.php
+
+```
+vendor/bin/phel run src/http-server/event-source.phel
+```
+
+- Open in browser: http://0.0.0.0:1337/
+
 ## TODO
 ### Channels (amphp/sync)
 - https://github.com/amphp/sync?tab=readme-ov-file#channels
