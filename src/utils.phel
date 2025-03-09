@@ -1,0 +1,9 @@
+(ns amphp-demo\utils)
+
+(defn fn->cls
+  "Converts callable such as Phel\Lang\AbstractFn into a closure that is often
+  expected by AMPHP"
+  [phel-fn]
+  (php/:: \Closure (fromCallable phel-fn)))
+
+(defn testfoo [x] (println "foofo" x))
