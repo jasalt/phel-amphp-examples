@@ -1,0 +1,34 @@
+(ns amphp-demo\socket\simple-http-server
+  (:require amphp-demo\utils :refer [callable->closure]))
+
+## Basic (and dumb) HTTP server following AMPHP docs and amphp/socket repo examples:
+## - https://amphp.org/socket#server
+## - https://github.com/amphp/socket/blob/8833f66ff40afa8bbbe508c17336c646f084e85e/examples/simple-http-server.php
+
+(def server (php/amp\socket\listen "127.0.0.1:8888"))
+
+## println here does not work when running as script, other http-server examples
+## with logging can give some clues how to do logging during  event loop running
+(println "Listening for new connections on " (php/-> server (getAddress)))
+(println "Open web browser or curl -vvv http://" (php/-> server (getAddress)) )
+
+(loop []
+  (let [socket (php/-> server (accept))]
+    (when socket
+      (php/amp\async
+       (callable->closure
+        (fn []
+          (let [address (php/-> socket (getRemoteAddress))
+                ip      (php/-> address (getAddress))  # ->getHost(); # not found, docs have issue?
+                port    (php/-> address (getPort))
+                body    (str "Hey, your IP is " ip " and your local port used is " port ".")
+                body-length (php/strlen body)
+                resp    (str "HTTP/1.1 200 OK\r\nConnection: close\r\nContent-Length: "
+                             body-length "\r\n\r\n" body)]
+            (println "accepted connection from" address)
+            (php/-> socket (write resp))
+            (php/-> socket (end))))))
+      (recur))))
+
+## After startup, open http://127.0.0.1:8888 with web browser or:
+## curl -vvv http://127.0.0.1:8888

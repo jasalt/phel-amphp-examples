@@ -8,7 +8,7 @@ See notes in files. Tested on:
 - PHP 8.2.7 (Debian 12)
 - Phel v0.16.1 (dev-main)
 
-### Hello World `src/helloworld.phel`
+### AMPHP docs Hello World `src/helloworld.phel`
 - https://amphp.org/installation
 
 ```
@@ -17,7 +17,16 @@ $ vendor/bin/phel run src/helloworld.phel
 Hello World from the future!%
 ```
 
-### HTTP Server `src/httpserver.phel`
+### `amphp/socket` `simple-http-server.php` example
+- https://amphp.org/socket#server
+- https://github.com/amphp/socket/blob/8833f66ff40afa8bbbe508c17336c646f084e85e/examples/simple-http-server.php
+```
+vendor/bin/phel run src/socket/simple-http-server.phel
+```
+
+After startup, open http://127.0.0.1:8888 with web browser or: `curl -vvv http://127.0.0.1:8888`
+
+### `amphp/http-server-router` `hello-world.php`
 - https://github.com/amphp/http-server-router/blob/2.x/examples/hello-world.php
 
 ```
