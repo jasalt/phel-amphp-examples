@@ -13,17 +13,26 @@ Tested on:
 
 Repository is created from https://github.com/phel-lang/cli-skeleton/ template which has more in-depth info on how to run Phel.
 
-### AMPHP docs Hello World `src/helloworld.phel`
+### AMPHP docs Hello World
 - https://amphp.org/installation
-
 ```
 composer install
 vendor/bin/phel run src/helloworld.phel
 # => Hello World from the future!%
 ```
 
-### `amphp/socket` `simple-http-server.php` example
-- https://amphp.org/socket#server
+### `amphp/socket` library
+- https://amphp.org/socket
+#### `echo-server.php`
+- https://github.com/amphp/socket/blob/8833f66ff40afa8bbbe508c17336c646f084e85e/examples/echo-server.php
+
+```
+vendor/bin/phel run src/socket/echo-server.phel
+```
+
+After startup, connect by running `nc localhost 8888`, then type something to send message and see it echoed back.
+
+#### `simple-http-server.php`
 - https://github.com/amphp/socket/blob/8833f66ff40afa8bbbe508c17336c646f084e85e/examples/simple-http-server.php
 ```
 vendor/bin/phel run src/socket/simple-http-server.phel
@@ -58,6 +67,7 @@ vendor/bin/phel run src/http-server/event-source.phel
 ```
 
 - Open in browser: http://0.0.0.0:1337/
+
 
 ## TODO
 ### Channels (amphp/sync)
