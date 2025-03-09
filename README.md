@@ -12,9 +12,9 @@ See notes in files. Tested on:
 - https://amphp.org/installation
 
 ```
-$ composer install
-$ vendor/bin/phel run src/helloworld.phel
-Hello World from the future!%
+composer install
+vendor/bin/phel run src/helloworld.phel
+# => Hello World from the future!%
 ```
 
 ### `amphp/socket` `simple-http-server.php` example
@@ -27,16 +27,20 @@ vendor/bin/phel run src/socket/simple-http-server.phel
 After startup, open http://127.0.0.1:8888 with web browser or: `curl -vvv http://127.0.0.1:8888`
 
 ### `amphp/http-server-router` `hello-world.php`
-- https://github.com/amphp/http-server-router/blob/2.x/examples/hello-world.php
+More complete HTTP server example with routing, argument parsing, logging etc.
+
+- https://github.com/amphp/http-server-router/blob/c0434ad6b1a0899f1fba5371e991974e77df1140/examples/hello-world.php
+- https://amphp.org/http-server-router
 
 ```
-$ vendor/bin/phel run src/httpserver.phel
+vendor/bin/phel run src/http-server-router/hello-world.phel
 ```
 
-Starts server at http://localhost:1337. Demo route with argument http://localhost:1337/myname.
+Starts server at http://localhost:1337 (demo route with argument http://localhost:1337/myname ).
 
 - Does not work in Phel REPL as stdout logger makes it exit.
 - How are webservers with Clojure(Script) set up to work with REPL that allow redefining functions or live reloading on the fly?
+  - Research notes at https://github.com/phel-lang/phel-lang/discussions/794
   - Something about AMPHP HTTP server cluster hotreloading: https://amphp.org/cluster#hot-reload-in-intellij--phpstorm
 
 ## TODO
