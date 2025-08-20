@@ -1,0 +1,52 @@
+(ns amphp-demo\http-server\event-source)
+
+(php/Amp\ParallelFunctions\parallelMap
+ (to-php-array
+  [1
+   2])
+ "sleep")
+
+## => <PHP-Array [0, 0]>
+## phel:6> Bye!  # ? the repl exits here but result works
+
+(php/Amp\ParallelFunctions\parallelMap
+ (to-php-array
+  [1
+   2])
+ (php/eval "return function($url) { return $url; };"))
+
+## PHP Warning:  file_get_contents(/tmp/phel/__phelb55Tx5(4) : eval()'d code): Failed to open stream: No such file or directory in /home/user/dev/phel-async-amphp-demo/vendor/laravel/serializable-closure/src/Support/ReflectionClosure.php on line 832
+## CompositeException: Multiple exceptions encountered (2); use "Amp\CompositeException::getReasons()" to retrieve the array of exceptions thrown:
+##
+## Amp\Parallel\Worker\TaskFailureError: Error thrown in context with message "Call to a member function bindTo() on null" and code "0" in /home/user/dev/phel-async-amphp-demo/vendor/laravel/serializable-closure/src/Serializers/Native.php:195
+## Stack trace in context:
+## #0 [internal function](0): Laravel\SerializableClosure\Serializers\Native->__unserialize()
+## #1 /home/user/dev/phel-async-amphp-demo/vendor/amphp/parallel-functions/src/Internal/SerializedCallableTask.php(28): unserialize()
+## #2 /home/user/dev/phel-async-amphp-demo/vendor/amphp/parallel/src/Worker/Internal/task-runner.php(58): Amp\ParallelFunctions\Internal\SerializedCallableTask->run()
+
+(php/Amp\ParallelFunctions\parallelMap
+ (to-php-array
+  [1 2])
+ (php/eval (str "return " (compile `(fn [url] url)))))
+
+## Compiled PHP: "new class() extends \\Phel\\Lang\\AbstractFn {\n  public const BOUND_TO = \"\";\n\n  public function __invoke(\$url) {\n    return \$url;\n  }\n};"
+
+## =>
+## SerializationException: Unsupported callable: Serialization of 'Phel\Lang\AbstractFn@anonymous' is not allowed
+
+(php/Amp\ParallelFunctions\parallelMap
+ (to-php-array
+  [1 2])
+ (php/eval (str "return " (compile `(php/:: \Closure (fromCallable (fn [url] url)))))))
+
+## Compiled PHP: "(\\Closure::fromCallable(new class() extends \\Phel\\Lang\\AbstractFn {\n  public const BOUND_TO = \"\";\n\n  public function __invoke(\$url) {\n    return \$url;\n  }\n}));"
+
+## =>
+## CompositeException: Multiple exceptions encountered (2); use "Amp\CompositeException::getReasons()" to retrieve the array of exceptions thrown:
+##
+## Amp\Parallel\Worker\TaskFailureError: Error thrown in context with message "Call to a member function bindTo() on null" and code "0" in /home/user/dev/phel-async-amphp-demo/vendor/laravel/serializable-closure/src/Serializers/Native.php:195
+## Stack trace in context:
+## #0 [internal function](0): Laravel\SerializableClosure\Serializers\Native->__unserialize()
+## #1 /home/user/dev/phel-async-amphp-demo/vendor/amphp/parallel-functions/src/Internal/SerializedCallableTask.php(28): unserialize()
+## #2 /home/user/dev/phel-async-amphp-demo/vendor/amphp/parallel/src/Worker/Internal/task-runner.php(58): Amp\ParallelFunctions\Internal\SerializedCallableTask->run()
+## #3 /home/user/dev/phel-async-amphp-demo/vendor/revolt/event-loop/src/EventLoop/Internal/AbstractDriver.php(430): Amp\Parallel\Worker\Internal\{closure}()

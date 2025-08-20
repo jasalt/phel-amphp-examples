@@ -18,7 +18,8 @@
     "amphp/http-server-router": "^2.0",
     "amphp/byte-stream": "^2.1",
     "amphp/log": "^2.0",
-    "amphp/socket": "^2.3"
+    "amphp/socket": "^2.3",
+    "amphp/parallel-functions": "^2.0"
   },
   "require-dev": {
     "symfony/var-dumper": "^6.4"
