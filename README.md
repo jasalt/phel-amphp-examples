@@ -69,6 +69,17 @@ vendor/bin/phel run src/http-server/event-source.phel
 - Open in browser: http://0.0.0.0:1337/
 
 
+### `amphp/parallel-functions` parallel processing
+https://github.com/amphp/parallel-functions/
+
+This library includes Clojure `pmap` style function that works with [SerializableClosure](https://github.com/laravel/serializable-closure/tree/2.x) communicated to thread pool process.
+
+Getting it working from Phel seems tricky however, with diagnostics info in `src/parallel-functions.phel`. Best attempt (in the end) was exporting a Phel function so that it can be called as a public static method initializing Phel environment and calling the function that way. This succeeds with the computation and prints result value in REPL window but then exits the REPL (these libraries warn about REPL incompatibility and many things).
+
+The exported function is at `src/exports/exports.phel` and it's generated class file at `src/PhelGenerated/Exports.php` which has been hand modified to have a public static function that the `/Amp\ParallelFunctions\parallelMap` is able to receive as argument and execute.
+
+![screenshot of display with parallel-function.phel demo running and using all the CPU for computation](misc/parallel-function-demo.png)
+
 ## TODO
 ### Channels (amphp/sync)
 - https://github.com/amphp/sync?tab=readme-ov-file#channels
