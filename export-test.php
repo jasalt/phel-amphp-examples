@@ -14,6 +14,6 @@ require $projectRootDir . '/vendor/autoload.php';
 # $ php example/using-exported-phel-function.php
 ###################################################
 
-$result = (new \PhelGenerated\AmphpDemo\Exports())->demoExportFunction();
+$result = (new \PhelGenerated\AmphpDemo\Exports())->demoExportFunction(100);
 
 echo 'Result = ' . $result . PHP_EOL;

@@ -204,6 +204,5 @@ $responses = \Amp\ParallelFunctions\parallelMap([
 
 (php/Amp\ParallelFunctions\parallelMap
  (to-php-array
-  [1
-   2])
+  (range 1 300))
  "\PhelGenerated\AmphpDemo\Exports::run")
