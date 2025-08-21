@@ -1,4 +1,5 @@
-(ns amphp-demo\http-server\event-source)
+(ns amphp-demo\http-server\event-source
+  (:use \Laravel\SerializableClosure\SerializableClosure))
 
 (php/Amp\ParallelFunctions\parallelMap
  (to-php-array
@@ -77,3 +78,123 @@
 ## Stack trace in context:
 ## #0 [internal function](0): Laravel\SerializableClosure\Serializers\Native->__unserialize()
 ## #1 /home/user/dev/phel-async-amphp-demo/vendor/amphp/parallel-functions/src/Internal/SerializedCallableTask.php(28): unserialize()
+
+
+## Test https://github.com/laravel/serializable-closure in use under the hood
+
+(php/:: \Closure (fromCallable (fn [url] url)))
+
+(php/serialize (php/new SerializableClosure (php/:: \Closure (fromCallable (fn [url] url)))))
+
+## =>
+## "O:47:\"Laravel\\SerializableClosure\\SerializableClosure\":1:{s:12:\"serializable\";O:46:\"Laravel\\SerializableClosure\\Serializers\\Native\":5:{s:3:\"use\";a:0:{}s:8:\"function\";s:38:\"function (\$url) {\n    return \$url;\n  }\";s:5:\"scope\";s:59:\"Phel\\Lang\\AbstractFn@anonymous\x00/tmp/phel/__phelTjUj4s:4\$21b\";s:4:\"this\";N;s:4:\"self\";s:32:\"00000000000017e60000000000000000\";}}"
+
+(php/unserialize (php/serialize (php/new SerializableClosure (php/:: \Closure (fromCallable (fn [url] url))))))
+## => Laravel\SerializableClosure\SerializableClosure
+
+(php/-> (php/new SerializableClosure (php/:: \Closure (fromCallable (fn [s] (println s))))) (__invoke 123))
+## => 123
+
+(php/Amp\ParallelFunctions\parallelMap
+ (to-php-array
+  [1 2])
+ (php/new SerializableClosure (php/:: \Closure (fromCallable (fn [url] url)))))
+
+## PHP Warning:  Class "Phel\Lang\AbstractFn@anonymous" not found in /home/user/dev/phel-async-amphp-demo/vendor/laravel/serializable-closure/src/Serializers/Native.php on line 195
+## PHP Warning:  Class "Phel\Lang\AbstractFn@anonymous" not found in /home/user/dev/phel-async-amphp-demo/vendor/laravel/serializable-closure/src/Serializers/Native.php on line 195
+## CompositeException: Multiple exceptions encountered (2); use "Amp\CompositeException::getReasons()" to retrieve the array of exceptions thrown:
+##
+## Amp\Parallel\Worker\TaskFailureError: TypeError thrown in context with message "call_user_func_array(): Argument #1 ($callback) must be a valid callback, no array or string given" and code "0" in /home/user/dev/phel-async-amphp-demo/vendor/laravel/serializable-closure/src/Serializers/Native.php:91
+## Stack trace in context:
+## #0 /home/user/dev/phel-async-amphp-demo/vendor/laravel/serializable-closure/src/Serializers/Native.php(91): call_user_func_array()
+## #1 [internal function](0): Laravel\SerializableClosure\Serializers\Native->__invoke()
+## #2 /home/user/dev/phel-async-amphp-demo/vendor/laravel/serializable-closure/src/SerializableClosure.php(48): call_user_func_array()
+## #3 /home/user/dev/phel-async-amphp-demo/vendor/amphp/parallel-functions/src/Internal/SerializedCallableTask.php(38): Laravel\SerializableClosure\SerializableClosure->__invoke()
+## #4 /home/user/dev/phel-async-amphp-demo/vendor/amphp/parallel/src/Worker/Internal/task-runner.php(58): Amp\ParallelFunctions\Internal\SerializedCallableTask->run()
+
+
+(php/-> (php/Amp\ParallelFunctions\parallel
+        (php/new SerializableClosure (php/:: \Closure (fromCallable (fn [] "test")))))
+       (__invoke))
+
+## PHP Warning:  Class "Phel\Lang\AbstractFn@anonymous" not found in /home/user/dev/phel-async-amphp-demo/vendor/laravel/serializable-closure/src/Serializers/Native.php on line 195
+## TaskFailureError: TypeError thrown in context with message "call_user_func_array(): Argument #1 ($callback) must be a valid callback, no array or string given" and code "0" in /home/user/dev/phel-async-amphp-demo/vendor/laravel/serializable-closure/src/Serializers/Native.php:91
+## Stack trace in context:
+## #0 /home/user/dev/phel-async-amphp-demo/vendor/laravel/serializable-closure/src/Serializers/Native.php(91): call_user_func_array()
+## #1 [internal function](0): Laravel\SerializableClosure\Serializers\Native->__invoke()
+## #2 /home/user/dev/phel-async-amphp-demo/vendor/laravel/serializable-closure/src/SerializableClosure.php(48): call_user_func_array()
+## #3 /home/user/dev/phel-async-amphp-demo/vendor/amphp/parallel-functions/src/Internal/SerializedCallableTask.php(38): Laravel\SerializableClosure\SerializableClosure->__invoke()
+## #4 /home/user/dev/phel-async-amphp-demo/vendor/amphp/parallel/src/Worker/Internal/task-runner.php(58): Amp\ParallelFunctions\Internal\SerializedCallableTask->run()
+
+
+(php/-> (php/:: \Closure (fromCallable (php/eval "
+return function () {
+  $opts = new \Phel\Compiler\Infrastructure\CompileOptions;
+  $rf = new \Phel\Run\RunFacade;
+  $result = $rf->eval(\"123\", $opts);
+  echo $result;
+};
+"))) (__invoke))
+
+## => 123nil
+
+(php/-> (php/new SerializableClosure (php/:: \Closure (fromCallable (php/eval "
+return function () {
+  $opts = new \Phel\Compiler\Infrastructure\CompileOptions;
+  $rf = new \Phel\Run\RunFacade;
+  $result = $rf->eval(\"123\", $opts);
+  echo $result;
+};
+")))) (__invoke))
+
+## => 123nil
+
+(php/Amp\ParallelFunctions\parallel
+ (php/new SerializableClosure (php/:: \Closure (fromCallable (php/eval "
+return function () {
+  $opts = new \Phel\Compiler\Infrastructure\CompileOptions;
+  $rf = new \Phel\Run\RunFacade;
+  $result = $rf->eval(\"123\", $opts);
+  echo $result;
+};
+")))))
+## PHP Warning:  file_get_contents(/tmp/phel/__phelZFauAe(4) : eval()'d code): Failed to open stream: No such file or directory in /home/user/dev/phel-async-amphp-demo/vendor/laravel/serializable-closure/src/Support/ReflectionClosure.php on line 832
+## Printer cannot print this type: Closure
+
+
+(php/-> (php/Amp\ParallelFunctions\parallel
+         (php/new SerializableClosure (php/:: \Closure (fromCallable (php/eval "
+return function () {
+  $opts = new \Phel\Compiler\Infrastructure\CompileOptions;
+  $rf = new \Phel\Run\RunFacade;
+  $result = $rf->eval(\"123\", $opts);
+  echo $result;
+};
+"))))) (__invoke))
+
+## PHP Warning:  file_get_contents(/tmp/phel/__phel6amsVH(5) : eval()'d code): Failed to open stream: No such file or directory in /home/user/dev/phel-async-amphp-demo/vendor/laravel/serializable-closure/src/Support/ReflectionClosure.php on line 832
+## TaskFailureError: Error thrown in context with message "Call to a member function bindTo() on null" and code "0" in /home/user/dev/phel-async-amphp-demo/vendor/laravel/serializable-closure/src/Serializers/Native.php:195
+## Stack trace in context:
+## #0 [internal function](0): Laravel\SerializableClosure\Serializers\Native->__unserialize()
+## #1 /home/user/dev/phel-async-amphp-demo/vendor/amphp/parallel-functions/src/Internal/SerializedCallableTask.php(28): unserialize()
+## #2 /home/user/dev/phel-async-amphp-demo/vendor/amphp/parallel/src/Worker/Internal/task-runner.php(58): Amp\ParallelFunctions\Internal\SerializedCallableTask->run()
+
+
+(php/eval "
+$responses = \Amp\ParallelFunctions\parallelMap([
+    'https://google.com/',
+    'https://github.com/',
+    'https://stackoverflow.com/',
+], function ($url) {
+    return file_get_contents($url);
+});
+")
+
+## PHP Warning:  file_get_contents(/tmp/phel/__phelCugQCw(4) : eval()'d code): Failed to open stream: No such file or directory in /home/user/dev/phel-async-amphp-demo/vendor/laravel/serializable-closure/src/Support/ReflectionClosure.php on line 832
+## CompositeException: Multiple exceptions encountered (3); use "Amp\CompositeException::getReasons()" to retrieve the array of exceptions thrown:
+##
+## Amp\Parallel\Worker\TaskFailureError: Error thrown in context with message "Call to a member function bindTo() on null" and code "0" in /home/user/dev/phel-async-amphp-demo/vendor/laravel/serializable-closure/src/Serializers/Native.php:195
+## Stack trace in context:
+## #0 [internal function](0): Laravel\SerializableClosure\Serializers\Native->__unserialize()
+## #1 /home/user/dev/phel-async-amphp-demo/vendor/amphp/parallel-functions/src/Internal/SerializedCallableTask.php(28): unserialize()
+## #2 /home/user/dev/phel-async-amphp-demo/vendor/amphp/parallel/src/Worker/Internal/task-runner.php(58): Amp\ParallelFunctions\Internal\SerializedCallableTask->run()
