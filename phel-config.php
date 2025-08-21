@@ -16,7 +16,7 @@ return (new PhelConfig())
         ->setMainPhelNamespace('amphp-demo\main')
         ->setMainPhpPath('out/main.php'))
     ->setExportConfig((new PhelExportConfig())
-        ->setFromDirectories(['src/modules'])
+        ->setFromDirectories(['src/exports'])
         ->setNamespacePrefix('PhelGenerated')
         ->setTargetDirectory('src/PhelGenerated'))
 ;

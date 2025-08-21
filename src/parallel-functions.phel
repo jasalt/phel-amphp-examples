@@ -198,3 +198,12 @@ $responses = \Amp\ParallelFunctions\parallelMap([
 ## #0 [internal function](0): Laravel\SerializableClosure\Serializers\Native->__unserialize()
 ## #1 /home/user/dev/phel-async-amphp-demo/vendor/amphp/parallel-functions/src/Internal/SerializedCallableTask.php(28): unserialize()
 ## #2 /home/user/dev/phel-async-amphp-demo/vendor/amphp/parallel/src/Worker/Internal/task-runner.php(58): Amp\ParallelFunctions\Internal\SerializedCallableTask->run()
+
+
+## Try Phel exported function
+
+(php/Amp\ParallelFunctions\parallelMap
+ (to-php-array
+  [1
+   2])
+ "\PhelGenerated\AmphpDemo\Exports::run")

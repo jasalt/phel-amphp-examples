@@ -1,0 +1,4 @@
+(ns amphp-demo\exports)
+
+(defn demo-export-function {:export true} []
+  123)
