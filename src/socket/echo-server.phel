@@ -4,8 +4,8 @@
 (def server (php/amp\socket\listen "127.0.0.1:8888"))
 (def address (php/-> server (getAddress)))
 
-## println here does not work when running as script, other http-server examples
-## with logging can give some clues how to do logging during  event loop running
+;; println here does not work when running as script, other http-server examples
+;; with logging can give some clues how to do logging during  event loop running
 (println "Listening for new connections on " (php/-> server (getAddress)))
 (println "Connect from a terminal, e.g. ")
 (println "nc " (php/-> address (getAddress)) (php/-> address (getPort)))
@@ -17,14 +17,14 @@
        (callable->closure
         (fn []
           (let [address (php/-> socket (getRemoteAddress))
-                ip      (php/-> address (getAddress))  # ->getHost(); # not found, docs have issue?
+                ip      (php/-> address (getAddress))  ; ->getHost(); ; not found, docs have issue?
                 port    (php/-> address (getPort))
                 body    (str "Hey, your IP is " ip " and your local port used is " port ".")
                 body-length (php/strlen body)
                 resp    (str "HTTP/1.1 200 OK\r\nConnection: close\r\nContent-Length: "
                              body-length "\r\n\r\n" body)]
 
-            (println "accepted connection from" address)  # println does not work
+            (println "accepted connection from" address)  ; println does not work
 
             (dofor [line :in (php/amp\bytestream\splitlines socket)]
                    (php/-> socket (write (str line "\n"))))

@@ -2,8 +2,8 @@
   (:require phel\html :refer [html doctype raw-string])
   (:require amphp-demo\utils :refer [callable->closure]))
 
-## Event source example
-## https://github.com/amphp/http-server/blob/3.x/examples/event-source.php#L65
+;; Event source example
+;; https://github.com/amphp/http-server/blob/3.x/examples/event-source.php;L65
 
 (def event-source-js
   (str
@@ -28,7 +28,7 @@
      (raw-string event-source-js)]]))
 
 (def log-handler (php/new \Amp\Log\StreamHandler (php/amp\bytestream\getstdout)))
-## Quits default Phel REPL! Make sure to run this file as script.
+;; Quits default Phel REPL! Make sure to run this file as script.
 
 (doto log-handler
   (php/-> (pushProcessor (php/new \Monolog\Processor\PsrLogMessageProcessor)))
@@ -44,7 +44,7 @@
   (php/-> (expose (php/new \Amp\Socket\InternetAddress "[::]" 1337))))
 
 (defn handler-fn [request]
-  ## (php/dd request)
+  ;; (php/dd request)
   (let [path (php/-> (php/-> request (getUri)) (getPath))]
     (case path
       "/" (php/new \Amp\Http\Server\Response
@@ -59,7 +59,7 @@
                                   (dofor [i :range [0 30]]
                                          (php/amp\delay 0.5)
                                          (php/yield (str "event: notification\ndata: Event " i "\n\n")))))
-      ## else
+      ;; else
       (php/new \Amp\Http\Server\Response
                (php/:: \Amp\Http\HttpStatus OK)
                (php-associative-array "content-type" "text/html")
