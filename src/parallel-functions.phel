@@ -1,4 +1,4 @@
-(ns amphp-demo\http-server\event-source
+(ns amphp-demo\parallel-functions
   (:use \Laravel\SerializableClosure\SerializableClosure))
 
 (php/Amp\ParallelFunctions\parallelMap
