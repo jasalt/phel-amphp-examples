@@ -5,11 +5,12 @@ Testing concurrent programming with [PHP 8.1+ Fibers](https://wiki.php.net/rfc/f
 Related discussion in Phel repo where comments are welcome https://github.com/phel-lang/phel-lang/discussions/793.
 
 ## Working examples
+NOTE: Windows doesn't support POSIX signals which are used for http-server examples.
 
 Tested on:
 
-- PHP 8.2.7 (Debian 12)
-- Phel v0.16.1 (dev-main)
+- PHP 8.4.16 (Debian 13)
+- Phel v0.33.0
 
 Repository is created from https://github.com/phel-lang/cli-skeleton/ template which has more in-depth info on how to run Phel.
 
