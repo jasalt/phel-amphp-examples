@@ -1,18 +1,18 @@
 (ns amphp-demo\socket\echo-server
   (:require phel\async :refer [async]))
 
-(def server (php/amp\socket\listen "127.0.0.1:8888"))
-(def address (php/-> server (getAddress)))
+(def server (php/\Amp\Socket\listen "127.0.0.1:8888"))
+(def address (.getAddress server))
 
-(println (str "Listening for new connections on " (php/-> server (getAddress))))
+(println (str "Listening for new connections on " (.getAddress server)))
 (println "Connect from a terminal, e.g. ")
-(println (str "nc " (php/-> address (getAddress)) " " (php/-> address (getPort))))
+(println (str "nc " (.getAddress address) " " (.getPort address)))
 
 (loop []
-  (when-let [socket (php/-> server (accept))]
+  (when-let [socket (.accept server)]
     (println "accepted connection from" address)
     (async
-        (dofor [line :in (php/amp\bytestream\splitlines socket)]
-               (php/-> socket (write (str line "\n"))))
-      (php/-> socket (end))))
+        (dofor [line :in (php/\Amp\ByteStream\splitLines socket)]
+               (.write socket (str line "\n")))
+      (.end socket)))
   (recur))

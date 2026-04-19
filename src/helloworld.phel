@@ -32,7 +32,7 @@
 
 ;; Converting Phel\Lang\AbstractFn into Closure used to be required
 ;; prior https://github.com/phel-lang/phel-lang/pull/1270
-;; (def my-closure1 (->closure my-function1))  ; does (php/:: \Closure (fromCallable my-function1))
+;; (def my-closure1 (->closure my-function1))  ; does (\Closure/fromCallable my-function1)
 ;; (def future1 (async my-closure1))  ; does (php/amp\async my-closure1)
 
 (def future1 (async (my-function1)))
@@ -44,7 +44,7 @@
 
 (def future2 (async (my-function2)))
 
-;; (await future1) equals to (php/-> future1 (await))
+;; (await future1) equals to (.await future1)
 
 (await-all [future1 future2])  ; await both futures
 

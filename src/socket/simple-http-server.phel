@@ -5,26 +5,26 @@
 ;; - https://amphp.org/socket;server
 ;; - https://github.com/amphp/socket/blob/8833f66ff40afa8bbbe508c17336c646f084e85e/examples/simple-http-server.php
 
-(def server (php/amp\socket\listen "127.0.0.1:8888"))
+(def server (php/\Amp\Socket\listen "127.0.0.1:8888"))
 
 ;; println here does not work when running as script, other http-server examples
 ;; with logging can give some clues how to do logging during  event loop running
-(println (str "Listening for new connections on " (php/-> server (getAddress))))
-(println (str "Open web browser or curl -vvv http://" (php/-> server (getAddress)) ))
+(println (str "Listening for new connections on " (.getAddress server)))
+(println (str "Open web browser or curl -vvv http://" (.getAddress server)))
 
 (loop []
-  (when-let [socket (php/-> server (accept))]
+  (when-let [socket (.accept server)]
     (async
-        (let [address (php/-> socket (getRemoteAddress))
-              ip      (php/-> address (getAddress))  ; ->getHost(); ; not found, docs have issue?
-              port    (php/-> address (getPort))
+        (let [address (.getRemoteAddress socket)
+              ip      (.getAddress address)  ; ->getHost(); ; not found, docs have issue?
+              port    (.getPort address)
               body    (str "Hey, your IP is " ip " and your local port used is " port ".")
               body-length (php/strlen body)
               resp    (str "HTTP/1.1 200 OK\r\nConnection: close\r\nContent-Length: "
                            body-length "\r\n\r\n" body)]
           (println (str "accepted connection from " address))
-          (php/-> socket (write resp))
-          (php/-> socket (end))))
+          (.write socket resp)
+          (.end socket)))
     (recur)))
 
 ;; After startup, open http://127.0.0.1:8888 with web browser or:

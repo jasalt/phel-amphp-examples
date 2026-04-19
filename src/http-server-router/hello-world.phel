@@ -12,17 +12,17 @@
 ;; Quits REPL! Needs some custom handler/adapter?
 
 (doto log-handler
-  (php/-> (pushProcessor (\Monolog\Processor\PsrLogMessageProcessor.)))
-  (php/-> (setFormatter (\Amp\Log\ConsoleFormatter.))))
+  (.pushProcessor (\Monolog\Processor\PsrLogMessageProcessor.))
+  (.setFormatter (\Amp\Log\ConsoleFormatter.)))
 
 (def logger (\Monolog\Logger. "server"))
-(php/-> logger (pushHandler log-handler))
+(.pushHandler logger log-handler)
 
-(def server (php/:: \Amp\Http\Server\SocketHttpServer (createForDirectAccess logger)))
+(def server (\Amp\Http\Server\SocketHttpServer/createForDirectAccess logger))
 
 (doto server
-  (php/-> (expose (\Amp\Socket\InternetAddress. "0.0.0.0" 1337)))
-  (php/-> (expose (\Amp\Socket\InternetAddress. "[::]" 1337))))
+  (.expose (\Amp\Socket\InternetAddress. "0.0.0.0" 1337))
+  (.expose (\Amp\Socket\InternetAddress. "[::]" 1337)))
 
 (def error-handler (\Amp\Http\Server\DefaultErrorHandler.))
 
@@ -32,31 +32,33 @@
   (\Amp\Http\Server\Response. (php/:: \Amp\Http\HttpStatus OK)
    (php-associative-array "content-type" "text/plain") "Hello, world!"))
 
+;; TODO sugar for php/::
 (defn handler-greet
   "takes Amp\Http\Server\Request"
   [req]
-  (let [args (php/-> req (getAttribute (php/:: \Amp\Http\Server\Router class)))]
+  (let [args (.getAttribute req (php/:: \Amp\Http\Server\Router class))]
     (\Amp\Http\Server\Response. (php/:: \Amp\Http\HttpStatus OK)
      (php-associative-array "content-type" "text/plain")
      (str "Hello, " (get args "name") "!"))))
 
 (def router (\Amp\Http\Server\Router. server logger error-handler))
-(doto router
-  (php/-> (addRoute "GET" "/"
-                    (\Amp\Http\Server\RequestHandler\ClosureRequestHandler.
-                     ;; defn functions use AbstractFn subclass and need conversion
-                     ;; (see https://github.com/phel-lang/phel-lang/pull/1270)
-                     (->closure handler-root))))
-  (php/-> (addRoute "GET" "/{name}"
-                    (\Amp\Http\Server\RequestHandler\ClosureRequestHandler.
-                     (->closure handler-greet)))))
 
-(php/-> server (start router error-handler))
+(doto router
+  (.addRoute "GET" "/"
+             (\Amp\Http\Server\RequestHandler\ClosureRequestHandler.
+              ;; defn functions use AbstractFn subclass and need conversion
+              ;; (see https://github.com/phel-lang/phel-lang/pull/1270)
+              (->closure handler-root)))
+  (.addRoute "GET" "/{name}"
+             (\Amp\Http\Server\RequestHandler\ClosureRequestHandler.
+              (->closure handler-greet))))
+
+(.start server router error-handler)
 
 (def signal (trap-signal (php-indexed-array php/SIGINT php/SIGTERM)))
 
-(php/-> logger (info (str "Caught signal " signal " stopping server")))
+(.info logger (str "Caught signal " signal " stopping server"))
 
-(php/-> server (stop))
+(.stop server)
 
 (println "OK")

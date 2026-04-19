@@ -34,47 +34,48 @@
 ;; Quits default Phel REPL! Make sure to run this file as script.
 
 (doto log-handler
-  (php/-> (pushProcessor (\Monolog\Processor\PsrLogMessageProcessor.)))
-  (php/-> (setFormatter (\Amp\Log\ConsoleFormatter.))))
+  (.pushProcessor (\Monolog\Processor\PsrLogMessageProcessor.))
+  (.setFormatter (\Amp\Log\ConsoleFormatter.)))
 
 (def logger (\Monolog\Logger. "server"))
-(php/-> logger (pushHandler log-handler))
+(.pushHandler logger log-handler)
 
-(def server (php/:: \Amp\Http\Server\SocketHttpServer (createForDirectAccess logger)))
+(def server (\Amp\Http\Server\SocketHttpServer/createForDirectAccess logger))
 
 (doto server
-  (php/-> (expose (\Amp\Socket\InternetAddress. "0.0.0.0" 1337)))
-  (php/-> (expose (\Amp\Socket\InternetAddress. "[::]" 1337))))
+  (.expose (\Amp\Socket\InternetAddress. "0.0.0.0" 1337))
+  (.expose (\Amp\Socket\InternetAddress. "[::]" 1337)))
 
+;; TODO sugar for php/::
 (defn handler-fn [request]
   ;; (php/dd request)
-  (let [path (php/-> (php/-> request (getUri)) (getPath))]
+  (let [path (-> request (.getUri) (.getPath))]
     (case path
       "/" (\Amp\Http\Server\Response.
            (php/:: \Amp\Http\HttpStatus OK)
-           (php-associative-array "content-type" "text/html; charset=utf-8")
+           #php {"content-type" "text/html; charset=utf-8"}
            (index-html))
 
-      "/events" (\Amp\Http\Server\Response
+      "/events" (\Amp\Http\Server\Response.
                  (php/:: \Amp\Http\HttpStatus OK)
-                 (php-associative-array "content-type" "text/event-stream; charset=utf-8")
+                 #php {"content-type" "text/event-stream; charset=utf-8"}
                  (\Amp\ByteStream\ReadableIterableStream.
                   (dofor [i :range [0 30]]
                          (delay 0.5)
                          (php/yield (str "event: notification\ndata: Event " i "\n\n")))))
       ;; else
-      (\Amp\Http\Server\Response
+      (\Amp\Http\Server\Response.
        (php/:: \Amp\Http\HttpStatus OK)
-       (php-associative-array "content-type" "text/html")
+       #php {"content-type" "text/html"}
        "404"))))
 
-(php/-> server (start (\Amp\Http\Server\RequestHandler\ClosureRequestHandler.
-                       ;; defn functions use AbstractFn subclass and need conversion
-                       ;; (see https://github.com/phel-lang/phel-lang/pull/1270)
-                       (->closure handler-fn))
-                      (\Amp\Http\Server\DefaultErrorHandler.)))
+(.start server (\Amp\Http\Server\RequestHandler\ClosureRequestHandler.
+                ;; defn functions use AbstractFn subclass and need conversion
+                ;; (see https://github.com/phel-lang/phel-lang/pull/1270)
+                (->closure handler-fn))
+        (\Amp\Http\Server\DefaultErrorHandler.))
 
-(def signal (trap-signal (php-indexed-array php/SIGINT php/SIGTERM)))
+(def signal (trap-signal #php [php/SIGINT php/SIGTERM]))
 
-(php/-> logger (info (str "Caught signal " signal " stopping server")))
-(php/-> server (stop))
+(.info logger (str "Caught signal " signal " stopping server"))
+(.stop server)
