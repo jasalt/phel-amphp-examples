@@ -29,15 +29,15 @@
 (defn handler-root
   "takes Amp\Http\Server\Request"
   [req]
-  (\Amp\Http\Server\Response. (php/:: \Amp\Http\HttpStatus OK)
+  (\Amp\Http\Server\Response. \Amp\Http\HttpStatus/OK
    (php-associative-array "content-type" "text/plain") "Hello, world!"))
 
 ;; TODO sugar for php/::
 (defn handler-greet
   "takes Amp\Http\Server\Request"
   [req]
-  (let [args (.getAttribute req (php/:: \Amp\Http\Server\Router class))]
-    (\Amp\Http\Server\Response. (php/:: \Amp\Http\HttpStatus OK)
+  (let [args (.getAttribute req \Amp\Http\Server\Router/class)]
+    (\Amp\Http\Server\Response. \Amp\Http\HttpStatus/OK
      (php-associative-array "content-type" "text/plain")
      (str "Hello, " (get args "name") "!"))))
 
