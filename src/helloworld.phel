@@ -18,6 +18,10 @@
   php/amp\async
   php/amp\delay
 
+  ;; Or:
+  php/\Amp\async
+  php/\Amp\delay
+
   ;; These are wrapped in async.phel
   )
 
