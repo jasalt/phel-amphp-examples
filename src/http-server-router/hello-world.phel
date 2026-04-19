@@ -41,8 +41,8 @@
 (doto router
   (php/-> (addRoute "GET" "/"
                     (\Amp\Http\Server\RequestHandler\ClosureRequestHandler.
-                     ;; TODO why ->closure conversion required here? Without:
-                     ;; Amp\Http\Server\RequestHandler\ClosureRequestHandler::__construct(): Argument #1 ($closure) must be of type Closure, Phel\Lang\AbstractFn@anonymous given,
+                     ;; defn functions use AbstractFn subclass and need conversion
+                     ;; (see https://github.com/phel-lang/phel-lang/pull/1270)
                      (->closure handler-root))))
   (php/-> (addRoute "GET" "/{name}"
                     (\Amp\Http\Server\RequestHandler\ClosureRequestHandler.
