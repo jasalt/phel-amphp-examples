@@ -1,5 +1,5 @@
 (ns amphp-demo\socket\simple-http-server
-  (:require phel\async :refer [->closure]))
+  (:require phel\async :refer [->closure async]))
 
 ;; Basic (and dumb) HTTP server following AMPHP docs and amphp/socket repo examples:
 ;; - https://amphp.org/socket;server
@@ -9,25 +9,24 @@
 
 ;; println here does not work when running as script, other http-server examples
 ;; with logging can give some clues how to do logging during  event loop running
-(println "Listening for new connections on " (php/-> server (getAddress)))
-(println "Open web browser or curl -vvv http://" (php/-> server (getAddress)) )
+(println (str "Listening for new connections on " (php/-> server (getAddress))))
+(println (str "Open web browser or curl -vvv http://" (php/-> server (getAddress)) ))
 
 (loop []
   (let [socket (php/-> server (accept))]
     (when socket
-      (php/amp\async
-       (->closure
-        (fn []
-          (let [address (php/-> socket (getRemoteAddress))
-                ip      (php/-> address (getAddress))  ; ->getHost(); ; not found, docs have issue?
-                port    (php/-> address (getPort))
-                body    (str "Hey, your IP is " ip " and your local port used is " port ".")
-                body-length (php/strlen body)
-                resp    (str "HTTP/1.1 200 OK\r\nConnection: close\r\nContent-Length: "
-                             body-length "\r\n\r\n" body)]
-            (println "accepted connection from" address)
-            (php/-> socket (write resp))
-            (php/-> socket (end))))))
+      (async
+          (fn []
+            (let [address (php/-> socket (getRemoteAddress))
+                  ip      (php/-> address (getAddress))  ; ->getHost(); ; not found, docs have issue?
+                  port    (php/-> address (getPort))
+                  body    (str "Hey, your IP is " ip " and your local port used is " port ".")
+                  body-length (php/strlen body)
+                  resp    (str "HTTP/1.1 200 OK\r\nConnection: close\r\nContent-Length: "
+                               body-length "\r\n\r\n" body)]
+              (println "accepted connection from" address)
+              (php/-> socket (write resp))
+              (php/-> socket (end)))))
       (recur))))
 
 ;; After startup, open http://127.0.0.1:8888 with web browser or:

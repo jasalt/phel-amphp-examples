@@ -5,46 +5,48 @@
 ;; https://amphp.org/http-server-router
 
 ;; $logHandler = new StreamHandler(ByteStream\getStdout());
-(def log-handler (php/new \Amp\Log\StreamHandler (php/amp\bytestream\getstdout)))
+(def log-handler (\Amp\Log\StreamHandler. (php/amp\bytestream\getstdout)))
 ;; Quits REPL! Needs some custom handler/adapter?
 
 (doto log-handler
-  (php/-> (pushProcessor (php/new \Monolog\Processor\PsrLogMessageProcessor)))
-  (php/-> (setFormatter (php/new \Amp\Log\ConsoleFormatter))))
+  (php/-> (pushProcessor (\Monolog\Processor\PsrLogMessageProcessor.)))
+  (php/-> (setFormatter (\Amp\Log\ConsoleFormatter.))))
 
-(def logger (php/new \Monolog\Logger "server"))
+(def logger (\Monolog\Logger. "server"))
 (php/-> logger (pushHandler log-handler))
 
 (def server (php/:: \Amp\Http\Server\SocketHttpServer (createForDirectAccess logger)))
 
 (doto server
-  (php/-> (expose (php/new \Amp\Socket\InternetAddress "0.0.0.0" 1337)))
-  (php/-> (expose (php/new \Amp\Socket\InternetAddress "[::]" 1337))))
+  (php/-> (expose (\Amp\Socket\InternetAddress. "0.0.0.0" 1337)))
+  (php/-> (expose (\Amp\Socket\InternetAddress. "[::]" 1337))))
 
-(def error-handler (php/new \Amp\Http\Server\DefaultErrorHandler))
+(def error-handler (\Amp\Http\Server\DefaultErrorHandler.))
 
 (defn handler-root
   "takes Amp\Http\Server\Request"
   [req]
-  (php/new \Amp\Http\Server\Response (php/:: \Amp\Http\HttpStatus OK)
-           (php-associative-array "content-type" "text/plain") "Hello, world!"))
+  (\Amp\Http\Server\Response. (php/:: \Amp\Http\HttpStatus OK)
+   (php-associative-array "content-type" "text/plain") "Hello, world!"))
 
 (defn handler-greet
   "takes Amp\Http\Server\Request"
   [req]
   (let [args (php/-> req (getAttribute (php/:: \Amp\Http\Server\Router class)))]
-    (php/new \Amp\Http\Server\Response (php/:: \Amp\Http\HttpStatus OK)
-             (php-associative-array "content-type" "text/plain")
-             (str "Hello, " (get args "name") "!"))))
+    (\Amp\Http\Server\Response. (php/:: \Amp\Http\HttpStatus OK)
+     (php-associative-array "content-type" "text/plain")
+     (str "Hello, " (get args "name") "!"))))
 
-(def router (php/new \Amp\Http\Server\Router server logger error-handler))
+(def router (\Amp\Http\Server\Router. server logger error-handler))
 (doto router
   (php/-> (addRoute "GET" "/"
-                    (php/new \Amp\Http\Server\RequestHandler\ClosureRequestHandler
-                             (->closure handler-root))))
+                    (\Amp\Http\Server\RequestHandler\ClosureRequestHandler.
+                     ;; TODO why ->closure conversion required here? Without:
+                     ;; Amp\Http\Server\RequestHandler\ClosureRequestHandler::__construct(): Argument #1 ($closure) must be of type Closure, Phel\Lang\AbstractFn@anonymous given,
+                     (->closure handler-root))))
   (php/-> (addRoute "GET" "/{name}"
-                    (php/new \Amp\Http\Server\RequestHandler\ClosureRequestHandler
-                             (->closure handler-greet)))))
+                    (\Amp\Http\Server\RequestHandler\ClosureRequestHandler.
+                     (->closure handler-greet)))))
 
 (php/-> server (start router error-handler))
 

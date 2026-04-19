@@ -66,6 +66,8 @@
        "404"))))
 
 (php/-> server (start (\Amp\Http\Server\RequestHandler\ClosureRequestHandler.
+                       ;; TODO why ->closure conversion required here? Without:
+                     ;; Amp\Http\Server\RequestHandler\ClosureRequestHandler::__construct(): Argument #1 ($closure) must be of type Closure, Phel\Lang\AbstractFn@anonymous given,
                        (->closure handler-fn))
                       (\Amp\Http\Server\DefaultErrorHandler.)))
 
