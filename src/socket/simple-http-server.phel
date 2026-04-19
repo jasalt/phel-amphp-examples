@@ -13,21 +13,19 @@
 (println (str "Open web browser or curl -vvv http://" (php/-> server (getAddress)) ))
 
 (loop []
-  (let [socket (php/-> server (accept))]
-    (when socket
-      (async
-          (fn []
-            (let [address (php/-> socket (getRemoteAddress))
-                  ip      (php/-> address (getAddress))  ; ->getHost(); ; not found, docs have issue?
-                  port    (php/-> address (getPort))
-                  body    (str "Hey, your IP is " ip " and your local port used is " port ".")
-                  body-length (php/strlen body)
-                  resp    (str "HTTP/1.1 200 OK\r\nConnection: close\r\nContent-Length: "
-                               body-length "\r\n\r\n" body)]
-              (println "accepted connection from" address)
-              (php/-> socket (write resp))
-              (php/-> socket (end)))))
-      (recur))))
+  (when-let [socket (php/-> server (accept))]
+    (async
+        (let [address (php/-> socket (getRemoteAddress))
+              ip      (php/-> address (getAddress))  ; ->getHost(); ; not found, docs have issue?
+              port    (php/-> address (getPort))
+              body    (str "Hey, your IP is " ip " and your local port used is " port ".")
+              body-length (php/strlen body)
+              resp    (str "HTTP/1.1 200 OK\r\nConnection: close\r\nContent-Length: "
+                           body-length "\r\n\r\n" body)]
+          (println (str "accepted connection from " address))
+          (php/-> socket (write resp))
+          (php/-> socket (end))))
+    (recur)))
 
 ;; After startup, open http://127.0.0.1:8888 with web browser or:
 ;; curl -vvv http://127.0.0.1:8888
