@@ -9,11 +9,10 @@
 (println (str "nc " (php/-> address (getAddress)) " " (php/-> address (getPort))))
 
 (loop []
-  (let [socket (php/-> server (accept))]
-    (when socket
-      (println "accepted connection from" address)
-      (async
-          (dofor [line :in (php/amp\bytestream\splitlines socket)]
-                 (php/-> socket (write (str line "\n"))))
-        (php/-> socket (end))))
-    (recur)))
+  (when-let [socket (php/-> server (accept))]
+    (println "accepted connection from" address)
+    (async
+        (dofor [line :in (php/amp\bytestream\splitlines socket)]
+               (php/-> socket (write (str line "\n"))))
+      (php/-> socket (end))))
+  (recur))
