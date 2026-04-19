@@ -1,5 +1,5 @@
 (ns amphp-demo\socket\echo-server
-  (:require amphp-demo\utils :refer [callable->closure]))
+  (:require phel\async :refer [->closure]))
 
 (def server (php/amp\socket\listen "127.0.0.1:8888"))
 (def address (php/-> server (getAddress)))
@@ -14,7 +14,7 @@
   (let [socket (php/-> server (accept))]
     (when socket
       (php/amp\async
-       (callable->closure
+       (->closure
         (fn []
           (let [address (php/-> socket (getRemoteAddress))
                 ip      (php/-> address (getAddress))  ; ->getHost(); ; not found, docs have issue?

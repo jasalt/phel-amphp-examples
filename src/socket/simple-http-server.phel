@@ -1,5 +1,5 @@
 (ns amphp-demo\socket\simple-http-server
-  (:require amphp-demo\utils :refer [callable->closure]))
+  (:require phel\async :refer [->closure]))
 
 ;; Basic (and dumb) HTTP server following AMPHP docs and amphp/socket repo examples:
 ;; - https://amphp.org/socket;server
@@ -16,7 +16,7 @@
   (let [socket (php/-> server (accept))]
     (when socket
       (php/amp\async
-       (callable->closure
+       (->closure
         (fn []
           (let [address (php/-> socket (getRemoteAddress))
                 ip      (php/-> address (getAddress))  ; ->getHost(); ; not found, docs have issue?

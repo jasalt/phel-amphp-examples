@@ -1,6 +1,12 @@
 (ns amphp-demo\parallel-functions
   (:use \Laravel\SerializableClosure\SerializableClosure))
 
+;; REPL experimentation with parallel processing pmap using threads with
+;; partially working results
+
+;; Phel implements single-threaded pmap, see reasoning behind it:
+;; https://github.com/phel-lang/phel-lang/pull/1272/changes
+
 (php/Amp\ParallelFunctions\parallelMap
  (to-php-array
   [1
