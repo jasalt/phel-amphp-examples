@@ -4,22 +4,16 @@
 (def server (php/amp\socket\listen "127.0.0.1:8888"))
 (def address (php/-> server (getAddress)))
 
-(println "Listening for new connections on " (php/-> server (getAddress)))
+(println (str "Listening for new connections on " (php/-> server (getAddress))))
 (println "Connect from a terminal, e.g. ")
 (println (str "nc " (php/-> address (getAddress)) " " (php/-> address (getPort))))
 
-;; TODO not working
 (loop []
   (let [socket (php/-> server (accept))]
-    (println "loop")
     (when socket
+      (println "accepted connection from" address)
       (async
-          (fn []
-            (println "hadlin")
-            (println "accepted connection from" address)
-
-              (dofor [line :in (php/amp\bytestream\splitlines socket)]
-                     (php/-> socket (write (str line "\n"))))
-            (php/-> socket (end))
-            )))
+          (dofor [line :in (php/amp\bytestream\splitlines socket)]
+                 (php/-> socket (write (str line "\n"))))
+        (php/-> socket (end))))
     (recur)))
