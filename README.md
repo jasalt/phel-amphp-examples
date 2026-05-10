@@ -62,7 +62,7 @@ More complete HTTP server example with routing, argument parsing, logging etc.
 vendor/bin/phel run src/http-server-router/hello-world.phel
 ```
 
-Starts server at http://localhost:8889 (demo route with argument http://localhost:8889/myname ).
+Starts server at http://localhost:8889 (demo route with argument http://localhost:8889/myname).
 
 - Does not work in Phel REPL as stdout logger makes it exit.
 - How are webservers with Clojure(Script) set up to work with REPL that allow redefining functions or live reloading on the fly?
@@ -78,7 +78,7 @@ Client keeps half-duplex HTTP connection open to server which pushes updates to 
 vendor/bin/phel run src/http-server/event-source.phel
 ```
 
-- Open in browser: http://0.0.0.0:8889/
+Open http://localhost:8889/ in browser.
 
 ## WIP Examples
 
