@@ -1,23 +1,65 @@
-# PHP Fibers & AMPHP testing with [Phel](https://phel-lang.org/)
+# [AMPHP](https://amphp.org/)'s concurrent programming examples translated to Phel
 
-Testing concurrent programming with [PHP 8.1+ Fibers](https://wiki.php.net/rfc/fibers) and async libraries available via [AMPHP](https://amphp.org/) by translating some of the examples to Phel code.
+Phel bundles AMPHP since [0.32.0](https://github.com/phel-lang/phel-lang/releases/tag/v0.32.0) (2026/04) for providing Clojure and ClojureScript inspired single-thread concurrency API's on top of PHP's built-in lower level [fibers](https://www.php.net/manual/en/language.fibers.php).
 
-Related discussion in Phel repo where comments are welcome https://github.com/phel-lang/phel-lang/discussions/793.
+Repository history also contains raw PHP interop examples with AMPHP library using older Phel versions.
 
-## Working examples
-Written using PHP 8.4.16 (on Debian 13) and the Phel version in `composer.json` / `composer.lock`. Should work on Mac just fine also but Windows doesn't natively support POSIX signals which are used in some examples so WSL is recommended over there.
+Skip directly to [Examples section](#examples) to get hands on with the code examples.
 
-### AMPHP docs Hello World
+## Details AMPHP library interop and wrapping provided by Phel
+Skip to examples section below if you .
+
+List PHP's 'user' definitions to see which \Amp functions are available for interop from https://github.com/amphp/amp/blob/7cf7fef3d667bfe4b2560bc87e67d5387a7bcde9/src/functions.php
+
+```
+(get (php/get_defined_functions) "user")
+;; => <PHP-Array ["amp\\async", "amp\\now", "amp\\delay", "amp\\trapsignal", ...
+```
+
+Phel wraps async in core.phel and delay in async.phel. The tutorial functions can be referred in following way (case-insensitive):
+
+| AMPHP function | Direct interop (case-insensitive) | Phel wrapping    |
+|----------------|-----------------------------------|------------------|
+| Amp\async      | php/Amp\async                     | async            |
+| Amp\delay      | php/Amp\delay                     | phel.async/delay |
+
+Phel's `await` calls the `Amp\Future`'s `await` method.
+
+Additionally `^:async` can be used as function definition metadata for wrapping the function automatically with `async` (since https://github.com/phel-lang/phel-lang/pull/1929).
+
+Converting `Phel\Lang\AbstractFn` into `\Closure` used to be required
+prior https://github.com/phel-lang/phel-lang/pull/1270 before passing
+it to `Amp\async`:
+
+```
+(def my-closure1 (->closure my-function1))  ; does (\Closure/fromCallable my-function1)
+(def future1 (async my-closure1))  ; does (php/Amp\async my-closure1)
+```
+
+This happens transparently to user since https://github.com/phel-lang/phel-lang/pull/1270.
+
+
+# Examples
+## Requirements
+
+- PHP 8.4+ (tested on PHP 8.4.16 / Debian 13)
+- [Composer](https://getcomposer.org/download/)
+
+AMPHP primarily supports Unix (-like) systems, Windows doesn't natively support POSIX signals which are used in some examples (WSL is recommended). Phel version is pinned in `composer.json`.
+
+## AMPHP docs Hello World
 - https://amphp.org/installation
 ```
 composer install
 vendor/bin/phel run src/helloworld.phel
-# => Hello World from the future!%
+
+;; Hello World from the future!
+;; ^:async Hello World from the future!
 ```
 
-### `amphp/socket` library
+## `amphp/socket` library
 - https://amphp.org/socket
-#### `echo-server.php`
+### `echo-server.php`
 - https://github.com/amphp/socket/blob/8833f66ff40afa8bbbe508c17336c646f084e85e/examples/echo-server.php
 
 ```
@@ -26,7 +68,7 @@ vendor/bin/phel run src/socket/echo-server.phel
 
 After startup, connect by running `nc localhost 8888`, then type something to send message and see it echoed back.
 
-#### `simple-http-server.php`
+### `simple-http-server.php`
 - https://github.com/amphp/socket/blob/8833f66ff40afa8bbbe508c17336c646f084e85e/examples/simple-http-server.php
 ```
 vendor/bin/phel run src/socket/simple-http-server.phel
@@ -34,7 +76,7 @@ vendor/bin/phel run src/socket/simple-http-server.phel
 
 After startup, open http://127.0.0.1:8888 with web browser or: `curl -vvv http://127.0.0.1:8888`
 
-### `amphp/http-server-router` `hello-world.php`
+## `amphp/http-server-router` `hello-world.php`
 More complete HTTP server example with routing, argument parsing, logging etc.
 
 - https://github.com/amphp/http-server-router/blob/c0434ad6b1a0899f1fba5371e991974e77df1140/examples/hello-world.php
@@ -51,7 +93,7 @@ Starts server at http://localhost:1337 (demo route with argument http://localhos
   - Research notes at https://github.com/phel-lang/phel-lang/discussions/794
   - Something about AMPHP HTTP server cluster hotreloading: https://amphp.org/cluster#hot-reload-in-intellij--phpstorm
 
-### `amphp/http-server` `event-source.php`
+## `amphp/http-server` `event-source.php`
 Example with server-sent event stream connection (SSE).
 Client keeps half-duplex HTTP connection open to server which pushes updates to client.
 - https://github.com/amphp/http-server/blob/3.x/examples/event-source.php
@@ -63,6 +105,8 @@ vendor/bin/phel run src/http-server/event-source.phel
 - Open in browser: http://0.0.0.0:1337/
 
 
+
+## WIP
 ### `amphp/parallel-functions` parallel processing
 https://github.com/amphp/parallel-functions/
 
@@ -76,7 +120,6 @@ The exported function is at `src/exports/exports.phel` and it's generated class 
 
 ![screenshot of display with parallel-function.phel demo running and using all the CPU for computation](misc/parallel-function-demo.png)
 
-## TODO
 ### Channels (amphp/sync)
 - https://github.com/amphp/sync?tab=readme-ov-file#channels
 How to represent such code with Phel?

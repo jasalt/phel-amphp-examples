@@ -1,45 +1,18 @@
-(ns amphp-demo\helloworld
-  (:require phel\async :refer [->closure async delay await await-all]))
+(ns amphp-demo.helloworld
+  (:require [phel.async]))
 
 ;;; AMPHP Example "Hello World" https://amphp.org/installation
 
-(comment
-  (defn show-user-defined
-    "List 'user' definitions to see which \Amp functions are available.
-   Phel does not have syntax equivalent to PHP `use function Amp\async;`
-   for requiring them explicitly in ns form e.g. from:
-   https://github.com/amphp/amp/blob/7cf7fef3d667bfe4b2560bc87e67d5387a7bcde9/src/functions.php"
-    []
-    (php/aget (php/get_defined_functions) "user"))
-
-  ;; The functions from \Amp get loaded however and can be seen via:
-  (show-user-defined)
-  ;; The tutorial functions can be referred by:
-  php/amp\async
-  php/amp\delay
-
-  ;; Or:
-  php/\Amp\async
-  php/\Amp\delay
-
-  ;; These are wrapped in async.phel
-  )
-
 (defn my-function1 []
   (print "Hello ")
-  (delay 2)  ; uses php/amp\delay
+  (phel.async/delay 2)
   (print "the future!"))
-
-;; Converting Phel\Lang\AbstractFn into Closure used to be required
-;; prior https://github.com/phel-lang/phel-lang/pull/1270
-;; (def my-closure1 (->closure my-function1))  ; does (\Closure/fromCallable my-function1)
-;; (def future1 (async my-closure1))  ; does (php/amp\async my-closure1)
 
 (def future1 (async (my-function1)))
 
 (defn my-function2 []
   (print "World ")
-  (delay 1)
+  (phel.async/delay 1)
   (print "from "))
 
 (def future2 (async (my-function2)))
@@ -47,6 +20,30 @@
 ;; (await future1) equals to (.await future1)
 
 (await-all [future1 future2])  ; await both futures
+(println)
+(phel.async/delay 1)
 
 ;; Prints:
 ;; Hello World from the future!
+
+;; Additionally ^:async can be used for function definition to wrap it with
+;; async since https://github.com/phel-lang/phel-lang/pull/1929
+
+(defn ^:async my-async-function1 []
+  (print "^:async Hello ")
+  (phel.async/delay 2)
+  (print "the future!"))
+
+(def future1b (my-async-function1))
+
+(defn ^:async my-async-function2 []
+  (print "World ")
+  (phel.async/delay 1)
+  (print "from "))
+
+(def future2b (my-async-function2))
+
+(await-all [future1b future2b])
+
+;; Prints:
+;; ^:async Hello World from the future!
