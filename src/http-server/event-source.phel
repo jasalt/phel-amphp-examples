@@ -58,7 +58,7 @@
       "/events" (new Amp.Http.Server.Response
                      Amp.Http.HttpStatus/OK
                      #php {"content-type" "text/event-stream; charset=utf-8"}
-                     (new \Amp.ByteStream.ReadableIterableStream
+                     (new Amp.ByteStream.ReadableIterableStream
                           (dofor [i :range [0 30]]
                                  (phel.async/delay 0.5)
                                  (php/yield (str "event: notification\ndata: Event " i "\n\n")))))
