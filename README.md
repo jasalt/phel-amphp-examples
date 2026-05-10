@@ -1,6 +1,6 @@
 # [AMPHP](https://amphp.org/) examples for Phel
 
-Phel bundles AMPHP since [0.32.0](https://github.com/phel-lang/phel-lang/releases/tag/v0.32.0) (2026/04), providing Clojure and ClojureScript inspired single-thread concurrency API's on top of PHP's built-in lower level [fibers](https://www.php.net/manual/en/language.fibers.php).
+Phel bundles AMPHP since [0.32.0](https://github.com/phel-lang/phel-lang/releases/tag/v0.32.0) (2026/04), providing Clojure and ClojureScript inspired single-thread concurrency APIs on top of PHP's built-in lower level [fibers](https://www.php.net/manual/en/language.fibers.php).
 
 See [the later section](#amphp-library-interop-notes) for more details.
 
