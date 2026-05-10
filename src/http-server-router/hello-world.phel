@@ -57,7 +57,7 @@
 
 (.start server router error-handler)
 
-(def signal (trap-signal (php-indexed-array php/SIGINT php/SIGTERM)))
+(def signal (trap-signal #php [php/SIGINT php/SIGTERM]))
 
 (.info logger (str "Caught signal " signal " stopping server"))
 
