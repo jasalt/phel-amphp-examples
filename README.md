@@ -64,11 +64,6 @@ vendor/bin/phel run src/http-server-router/hello-world.phel
 
 Starts server at http://localhost:8889 (demo route with argument http://localhost:8889/myname).
 
-- Does not work in Phel REPL as stdout logger makes it exit.
-- How are webservers with Clojure(Script) set up to work with REPL that allow redefining functions or live reloading on the fly?
-  - Research notes at https://github.com/phel-lang/phel-lang/discussions/794
-  - Something about AMPHP HTTP server cluster hotreloading: https://amphp.org/cluster#hot-reload-in-intellij--phpstorm
-
 ## `amphp/http-server` `event-source.php`
 Example with server-sent event stream connection (SSE).
 Client keeps half-duplex HTTP connection open to server which pushes updates to client.
