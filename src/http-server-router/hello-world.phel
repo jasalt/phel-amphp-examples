@@ -1,5 +1,4 @@
-(ns amphp-demo\http-server-router\hello-world
-  (:require phel\async :refer [->closure]))
+(ns amphp-demo.http-server-router.hello-world)
 
 (def trap-signal php/\Amp\trapSignal)
 (def get-stdout php/\Amp\ByteStream\getStdout)
@@ -8,52 +7,52 @@
 ;; https://amphp.org/http-server-router
 
 ;; $logHandler = new StreamHandler(ByteStream\getStdout());
-(def log-handler (new \Amp\Log\StreamHandler (get-stdout)))
+(def log-handler (new Amp.Log.StreamHandler (get-stdout)))
 ;; Quits REPL! Needs some custom handler/adapter?
 
 (doto log-handler
-  (.pushProcessor (new \Monolog\Processor\PsrLogMessageProcessor))
-  (.setFormatter (new \Amp\Log\ConsoleFormatter)))
+  (.pushProcessor (new Monolog.Processor.PsrLogMessageProcessor))
+  (.setFormatter (new Amp.Log.ConsoleFormatter)))
 
-(def logger (new \Monolog\Logger "server"))
+(def logger (new Monolog.Logger "server"))
 (.pushHandler logger log-handler)
 
-(def server (\Amp\Http\Server\SocketHttpServer/createForDirectAccess logger))
+(def server (Amp.Http.Server.SocketHttpServer/createForDirectAccess logger))
 
 (def host (if (php/getenv "EXPOSE") "0.0.0.0" "127.0.0.1"))
 (doto server
-  (.expose (new \Amp\Socket\InternetAddress host 8889))
-  (.expose (new \Amp\Socket\InternetAddress "[::]" 8889)))
+  (.expose (new Amp.Socket.InternetAddress host 8889))
+  (.expose (new Amp.Socket.InternetAddress "[::]" 8889)))
 
-(def error-handler (new \Amp\Http\Server\DefaultErrorHandler))
+(def error-handler (new Amp.Http.Server.DefaultErrorHandler))
 
 (defn handler-root
-  "takes Amp\Http\Server\Request"
+  "takes Amp.Http.Server.Request"
   [req]
-  (new \Amp\Http\Server\Response
-       \Amp\Http\HttpStatus/OK
+  (new Amp.Http.Server.Response
+       Amp.Http.HttpStatus/OK
        #php {"content-type" "text/plain"}
        "Hello, world!"))
 
 (defn handler-greet
-  "takes Amp\Http\Server\Request"
+  "takes Amp.Http.Server.Request"
   [req]
-  (let [args (.getAttribute req \Amp\Http\Server\Router/class)]
-    (new \Amp\Http\Server\Response
-     \Amp\Http\HttpStatus/OK
+  (let [args (.getAttribute req Amp.Http.Server.Router/class)]
+    (new Amp.Http.Server.Response
+     Amp.Http.HttpStatus/OK
      #php {"content-type" "text/plain"}
      (str "Hello, " (get args "name") "!"))))
 
-(def router (new \Amp\Http\Server\Router server logger error-handler))
+(def router (new Amp.Http.Server.Router server logger error-handler))
 
 (doto router
   (.addRoute "GET" "/"
-             (new \Amp\Http\Server\RequestHandler\ClosureRequestHandler
+             (new Amp.Http.Server.RequestHandler.ClosureRequestHandler
               ;; defn functions use AbstractFn subclass and need conversion
               ;; (see https://github.com/phel-lang/phel-lang/pull/1270)
               (->closure handler-root)))
   (.addRoute "GET" "/{name}"
-             (new \Amp\Http\Server\RequestHandler\ClosureRequestHandler
+             (new Amp.Http.Server.RequestHandler.ClosureRequestHandler
               (->closure handler-greet))))
 
 (.start server router error-handler)
