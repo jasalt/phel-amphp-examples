@@ -114,14 +114,14 @@ The exported function is at `src/exports/exports.phel` and it's generated class 
 
 ## AMPHP library interop notes
 
-List PHP's 'user' definitions to see which \Amp functions are available for interop from https://github.com/amphp/amp/blob/7cf7fef3d667bfe4b2560bc87e67d5387a7bcde9/src/functions.php
+List PHP's user definitions to see which Amp functions are available for interop from https://github.com/amphp/amp/blob/7cf7fef3d667bfe4b2560bc87e67d5387a7bcde9/src/functions.php:
 
 ```
 (get (php/get_defined_functions) "user")
 ;; => <PHP-Array ["amp\\async", "amp\\now", "amp\\delay", "amp\\trapsignal", ...
 ```
 
-Phel wraps async in core.phel and delay in async.phel. The tutorial functions can be referred in following way (case-insensitive):
+Phel wraps async in `core.phel` and delay in `async.phel`. The tutorial functions can be called following ways:
 
 | AMPHP function | Direct interop (case-insensitive) | Phel wrapping    |
 |----------------|-----------------------------------|------------------|
