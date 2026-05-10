@@ -1,11 +1,11 @@
-(ns amphp-demo\socket\simple-http-server
-  (:require phel\async :refer [->closure async]))
+(ns amphp-demo.socket.simple-http-server)
 
 ;; Basic (and dumb) HTTP server following AMPHP docs and amphp/socket repo examples:
 ;; - https://amphp.org/socket;server
 ;; - https://github.com/amphp/socket/blob/8833f66ff40afa8bbbe508c17336c646f084e85e/examples/simple-http-server.php
 
-(def server (php/\Amp\Socket\listen "127.0.0.1:8888"))
+(def host (if (php/getenv "EXPOSE") "0.0.0.0" "127.0.0.1"))
+(def server (php/\Amp\Socket\listen (str host ":8889")))
 
 ;; println here does not work when running as script, other http-server examples
 ;; with logging can give some clues how to do logging during  event loop running
@@ -27,5 +27,5 @@
           (.end socket)))
     (recur)))
 
-;; After startup, open http://127.0.0.1:8888 with web browser or:
-;; curl -vvv http://127.0.0.1:8888
+;; After startup, open http://127.0.0.1:8889 with web browser or:
+;; curl -vvv http://127.0.0.1:8889
