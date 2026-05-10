@@ -17,7 +17,7 @@ Alternatively examples can be run using inside container (`podman` command can b
 
 ```bash
 podman build -t phel-amphp-examples -f Containerfile .
-podman run -it --rm -v .:/examples -p 8889:8889 phel-amphp-examples /bin/bash
+podman run -it --rm -v .:/examples -p 8889:8889 -e=EXPOSE=true phel-amphp-examples /bin/bash
 # podman rmi phel-amphp-examples  # cleanup image afterwards (optional)
 ```
 
