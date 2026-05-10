@@ -8,10 +8,12 @@ See [the later section](#amphp-library-interop-notes) for more details.
 
 ## Requirements
 
-- PHP 8.4+ (tested on PHP 8.4.16 / Debian 13)
+- PHP 8.4+ (tested on PHP 8.4.16 / Debian 13) with `pcntl` module
 - [Composer](https://getcomposer.org/download/)
 
-AMPHP primarily supports Unix (-like) systems, Windows doesn't natively support POSIX signals which are used in some examples (WSL is recommended). Phel version is pinned in `composer.json`.
+Phel version is pinned in `composer.json`.
+
+Some examples depend on `pcntl` PHP module for handling POSIX signals and it's not available on Windows (WSL recommended).
 
 Alternatively examples can be run using inside container (`podman` command can be replaced with `docker`):
 
