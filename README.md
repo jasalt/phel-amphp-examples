@@ -101,9 +101,9 @@ This library includes Clojure `pmap` style function that works with [Serializabl
 
 NOTE: This is not the same as single-threaded `pmap` that has been implemented in [`phel\async`](https://github.com/phel-lang/phel-lang/blob/522380ac6dfe1e336f075fe7519782e277543311/src/phel/async.phel#L83) after this experiment in https://github.com/phel-lang/phel-lang/pull/1272.
 
-Getting it working from Phel seems tricky however, with diagnostics info in `src/parallel-functions.phel`. Best attempt (in the end) was exporting a Phel function so that it can be called as a public static method initializing Phel environment and calling the function that way. This succeeds with the computation and prints result value in REPL window but then exits the REPL (these libraries warn about REPL incompatibility and many things).
+Getting it working from Phel seems tricky however, with diagnostics info in `misc/parallel-functions.phel`. Best attempt (in the end) was exporting a Phel function so that it can be called as a public static method initializing Phel environment and calling the function that way. This succeeds with the computation and prints result value in REPL window but then exits the REPL (these libraries warn about REPL incompatibility and many things).
 
-The exported function is at `src/exports/exports.phel` and it's generated class file (was) at `src/PhelGenerated/Exports.php` which was hand modified to have a public static function that the `/Amp\ParallelFunctions\parallelMap` is able to receive as argument and execute (I lost the actual file somewhere, use screenshot as reference).
+The exported function is at `misc/exports/exports.phel` and it's generated class file (was) at `src/PhelGenerated/Exports.php` which was hand modified to have a public static function that the `/Amp\ParallelFunctions\parallelMap` is able to receive as argument and execute (I lost the actual file somewhere, use screenshot as reference).
 
 ![screenshot of display with parallel-function.phel demo running and using all the CPU for computation](misc/parallel-function-demo.png)
 
