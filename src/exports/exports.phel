@@ -1,4 +1,4 @@
-(ns amphp-demo\exports)
+(ns amphp-demo.exports)
 
 
 (defn demo-export-function {:export true} [number]

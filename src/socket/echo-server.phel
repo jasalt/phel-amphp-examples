@@ -1,7 +1,7 @@
 (ns amphp-demo.socket.echo-server)
 
 (def host (if (php/getenv "EXPOSE") "0.0.0.0" "127.0.0.1"))
-(def server (php/\Amp\Socket\listen (str host ":8889")))
+(def server (php/Amp.Socket/listen (str host ":8889")))
 (def address (.getAddress server))
 
 (println (str "Listening for new connections on " (.getAddress server)))

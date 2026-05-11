@@ -2,9 +2,6 @@
   (:require phel.html :refer [html doctype raw-string])
   (:require phel.async))
 
-(def trap-signal php/\Amp\trapSignal)
-(def get-stdout php/\Amp\ByteStream\getStdout)
-
 ;; Event source example
 ;; https://github.com/amphp/http-server/blob/8dc32cc6a65c12a3543276305796b993c56b76ef/examples/event-source.php
 
@@ -30,7 +27,7 @@
     [:script
      (raw-string event-source-js)]]))
 
-(def log-handler (new Amp.Log.StreamHandler (get-stdout)))
+(def log-handler (new Amp.Log.StreamHandler (php/Amp.ByteStream/getStdout)))
 ;; Quits default Phel REPL! Make sure to run this file as script.
 
 (doto log-handler
@@ -74,7 +71,7 @@
                     (->closure handler-fn))
         (new Amp.Http.Server.DefaultErrorHandler))
 
-(def signal (trap-signal #php [php/SIGINT php/SIGTERM]))
+(def signal (php/Amp/trapSignal #php [php/SIGINT php/SIGTERM]))
 
 (.info logger (str "Caught signal " signal " stopping server"))
 (.stop server)
